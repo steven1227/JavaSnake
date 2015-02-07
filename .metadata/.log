@@ -305,3 +305,9 @@ Binding(CTRL+SHIFT+H,
 		,,true),null),
 	org.eclipse.ui.defaultAcceleratorConfiguration,
 	org.eclipse.ui.contexts.window,,,system)
+
+!ENTRY org.eclipse.ui 4 4 2015-02-07 22:44:35.346
+!MESSAGE Conflicting handlers for org.eclipse.ui.edit.copy: {com.intooitus.infusion.handlers.CopyEntityToClipboard} vs {org.eclipse.ui.internal.handlers.WidgetMethodHandler@45a6591e}
+
+!ENTRY org.eclipse.ui 2 2 2015-02-07 22:44:35.370
+!MESSAGE Invalid property category path: org.eclipse.cdt.managedbuilder.ui.properties.Page_head_build (bundle: org.eclipse.cdt.ui, propertyPage: org.eclipse.cdt.managedbuilder.ui.properties.BuildLogPreferencePage)
