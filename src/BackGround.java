@@ -13,6 +13,7 @@ import java.util.Random;
 public class BackGround  extends Canvas implements Runnable,KeyListener
 {
 
+
 	private LinkedList<Point> snake;
 	//the fruit var
 	private Point fruit;
@@ -23,6 +24,7 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 	private final int BOX_Width=15;
 	private final int Grid_Width=30;
 	private final int Grid_Height=30;
+	private int direct=direction.No_direction;
 	private Graphics global;
 	
 	public void init()
@@ -34,6 +36,10 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 	public void paint(Graphics g)
 	{
 		this.fruit = new Point(10,10);
+		snake = new LinkedList<Point>();
+		snake.add(new Point(3,1));
+		snake.add(new Point(3,2));
+		snake.add(new Point(3,3));
 		this.global=g.create();
 		this.addKeyListener(this);
 		this.Run=new Thread(this);
@@ -45,7 +51,7 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 	{
 		g.clearRect(100, 0, this.Grid_Width*this.BOX_Width, this.Grid_Height*this.BOX_Height);
 		this.DrawGrid(g);
-		//this.DrawSanke(g);
+		this.DrawSanke(g);
 		this.DrawFruit(g);
 	}
 	
@@ -69,6 +75,8 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 	
 	public void move()
 	{
+		Point head = snake.peekFirst();
+		Point newPoint = head;	
 		switch (this.direct)
 		{
 		case direction.east:
@@ -83,21 +91,31 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 		case direction.north:	
 			System.out.println("up");
 			break;
-	
-		
-		
-		
-		
+			
 		}
+		
+		//check if the point is fruit
+		if (newPoint.equals(fruit)){
+			// snake add head action 
+			
+			PlaceFruit();
+		}
+			
 	}
 	
 	
 	public void DrawSanke(Graphics g)
 	{
 		g.setColor(Color.green);
+		for (Point p : snake)
+		{
+			g.fillRect(100+p.x * BOX_Width, p.y * BOX_Height, BOX_Width, BOX_Height);
+		}
+		g.setColor(Color.BLACK);
 	}
 	
-<<<<<<< HEAD
+	
+
 	public void DrawFruit(Graphics g) {
 		g.setColor(Color.RED);
 		g.fillOval(this.fruit.x*BOX_Width+100,this.fruit.y*BOX_Height,BOX_Width,BOX_Height);
@@ -117,43 +135,16 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 		
 		fruit = randomPoint;
 	}
-=======
-	private LinkedList<Point> snake;
-	private Thread Run;
-	//the map parameter
-	private final int BOX_Height=15;
-	private final int BOX_Width=15;
-	private final int Grid_Width=30;
-	private final int Grid_Height=30;
-	private Graphics global;
-	private int direct=direction.No_direction;
->>>>>>> 393a593c5798ebe95b384f47903e56a89d0b0ca5
+
 	
-	public void Move() {
-		Point head = snake.peekFirst();
-		Point newPoint = head;
-		
-		
-		//check if the point is fruit
-		if (newPoint.equals(fruit)){
-			// snake add head action 
-			
-			PlaceFruit();
-			
-			
-		}
-		
-	}
 	
 	public void run() {
 		while(true)
-		{
-			this.Draw(global);
-<<<<<<< HEAD
-			//this.Move();
-=======
+		{		
+			
 			this.move();
->>>>>>> 393a593c5798ebe95b384f47903e56a89d0b0ca5
+			this.Draw(global);
+
 			try
 			{
 				Thread.currentThread();
@@ -171,8 +162,7 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 	@Override
 	public void keyPressed(KeyEvent arg0) {
 		// TODO Auto-generated method stub
-<<<<<<< HEAD
-=======
+
 	//	System.out.println("right");
 		if (arg0.getKeyCode()==KeyEvent.VK_UP){
 			this.direct=direction.north;
@@ -194,7 +184,7 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 		//	System.out.println(this.direct);
 		}
 					
->>>>>>> 393a593c5798ebe95b384f47903e56a89d0b0ca5
+
 		
 	}
 
