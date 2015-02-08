@@ -1,10 +1,12 @@
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -23,19 +25,20 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 	private String restart = "";
 	
 	private LinkedList<Point> snake;
-	//the fruit var
+
 	private Point fruit;
 	
 	private Thread Run;
-	//the map parameter
+
 	private final int BOX_Height=20;
 	private final int BOX_Width=20;
 	private final int Grid_Width=30;
 	private final int Grid_Height=30;
 	private int direct=direction.No_direction;
-	private Graphics global;
+
 	private int score=0;
 	private boolean start=false;
+
 	
 	public void init()
 	{
@@ -48,33 +51,49 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 		
 		System.out.print("fuck\n");
 		
+
+		if (snake==null){
+			snake = new LinkedList<Point>();
+			snake.add(new Point(1,3));
+			snake.add(new Point(1,2));
+			snake.add(new Point(1,1));
+			this.fruit = new Point(10,10);
+		}
+
 		
-		
-		snake = new LinkedList<Point>();
-		
-		
-		snake.add(new Point(1,3));
-		snake.add(new Point(1,2));
-		snake.add(new Point(1,1));
-		
-		
-		this.global=g.create();			//capture the graphics that we can use
+				//capture the graphics that we can use
 		
 		this.addKeyListener(this);
 		
 		g.setFont(new Font("TimesRoman", Font.PLAIN,18)); 
 		String s="Score:";
 		g.drawString(s, 800, 300);
-		this.PlaceFruit();
+		//this.PlaceFruit();
 		
 		if(this.Run==null)
 		{
 			this.Run=new Thread(this,"draw");
 			Run.start();
 		}
-	
+		this.DrawGrid(g);
+		this.DrawScore(g);
+		
+		if (this.start==false)
+		{
+			g.setFont(new Font("TimesRoman", Font.BOLD,30)); 
+			String s2="Press Space Button to start ";
+			g.drawString(this.restart, 205, 250);
+			g.drawString(s2, 205, 300);	
+		}
+		else
+		{
+			this.DrawSanke(g);
+			this.DrawFruit(g);	
+			
+		}
 	}
 	
+
 	public void restart()
 	{
 		
@@ -89,30 +108,23 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 		this.restart=new String("Your Snake failed.");
 		
 	}
-	public void Draw(Graphics g)
-	{
-		
-		g.clearRect(100, 0, this.Grid_Width*this.BOX_Width, this.Grid_Height*this.BOX_Height);
+
+	public void update(Graphics g) {
+		Graphics offScreenGraphics;
+		Dimension d = this.getSize();
+		System.out.println(d.width+"..."+d.height);
+		BufferedImage offscreen = new BufferedImage(d.width,d.height, BufferedImage.TYPE_INT_ARGB);
+		offScreenGraphics = offscreen.getGraphics();
+		offScreenGraphics.setColor(this.getBackground());
+		offScreenGraphics.fillRect(100, 0, d.width, d.height);
+		offScreenGraphics.setColor(this.getForeground());
+		paint(offScreenGraphics);
+
+		g.drawImage(offscreen, 0, 0, this);
+
 	
-		this.DrawGrid(g);
-		
-		this.DrawScore(g);
-		
-		if (this.start==false)
-		{
-			g.setFont(new Font("TimesRoman", Font.BOLD,30)); 
-			String s="Press Space Button to start ";
-			g.drawString(this.restart, 205, 250);
-			g.drawString(s, 205, 300);	
-		}
-		else
-		{
-			this.DrawSanke(g);
-			this.DrawFruit(g);	
-			
-		}
 	}
-	
+
 	public void DrawGrid(Graphics g)
 	{
 		g.setColor(Color.GRAY);
@@ -133,13 +145,15 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 	public void DrawScore(Graphics g)
 	{
 		g.setColor(Color.BLACK);
-		g.clearRect(850, 250, 100, 100);
+		//g.clearRect(850, 250, 100, 100);
+		 
 		g.setFont(new Font("TimesRoman", Font.PLAIN,18)); 
 		g.drawString(""+this.score, 860, 300);
 	}
 	
 	public void move()
 	{
+
 		boolean flag=true;
 		Point head = snake.peekFirst();
 		Point tail = snake.peekLast();
@@ -184,18 +198,17 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 		
 		else if (snake.contains(newPoint))
 		{
-			try {
-				Thread.currentThread().wait();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			restart();
+			flag=false;
 
 		}
 		
 		
 		if(this.direct!=direction.No_direction&&flag)	
 			snake.push(newPoint);
+		
+		
+
 	}
 	
 	
@@ -214,12 +227,7 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 			g.fillRect(100+snake.get(i).x * BOX_Width, snake.get(i).y * BOX_Height, BOX_Width, BOX_Height);
 			
 		}
-//		for (Point p : snake)
-//		{
-//			g.fillRect(100+p.x * BOX_Width, p.y * BOX_Height, BOX_Width, BOX_Height);
-//		}
-//		g.setColor(Color.white);
-//		g.setColor(Color.GRAY);
+
 	}
 	
 	
@@ -253,7 +261,8 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 		{		
 			
 			this.move();
-			this.Draw(global);
+			//this.Draw(global);
+			this.repaint();
 
 			try
 			{
@@ -273,39 +282,47 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 
 	@Override
 	public void keyPressed(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-
-	//	System.out.println("right");
+		
+		
 		if (arg0.getKeyCode()==KeyEvent.VK_UP){
+
 			if (this.direct!=direction.south&&this.direct!=direction.No_direction)
+
 			this.direct=direction.north;
-			//System.out.println(this.direct);
+	
 		}
 		else if (arg0.getKeyCode()==KeyEvent.VK_DOWN)
 		{
+
 			if (this.direct!=direction.north&&this.direct!=direction.No_direction)
+
 			this.direct=direction.south;
-		//	System.out.println(this.direct);
+
 		}
 		else if (arg0.getKeyCode()==KeyEvent.VK_RIGHT)
 		{
+
 			if (this.direct!=direction.west&&this.direct!=direction.No_direction)
 				this.direct=direction.east;
+
 				//System.out.println(this.direct);
 		}
 		else if (arg0.getKeyCode()==KeyEvent.VK_LEFT)
 		{
+
 			if (this.direct!=direction.east&&this.direct!=direction.No_direction)
+
 			this.direct =direction.west;
-		//	System.out.println(this.direct);
+
 		}
 		else if (arg0.getKeyCode()==KeyEvent.VK_SPACE)
 		{
 			if(this.direct==direction.No_direction)
 			this.direct =direction.south;
 			this.start=true;
-		//	System.out.println(this.direct);
+
 		}
+		
 					
 	}
 
