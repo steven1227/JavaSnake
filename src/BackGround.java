@@ -15,6 +15,11 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 {
 
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private LinkedList<Point> snake;
 	//the fruit var
 	private Point fruit;
@@ -45,9 +50,9 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 		snake = new LinkedList<Point>();
 		
 		
-		snake.add(new Point(3,3));
-		snake.add(new Point(3,2));
-		snake.add(new Point(3,1));
+		snake.add(new Point(1,3));
+		snake.add(new Point(1,2));
+		snake.add(new Point(1,1));
 		
 		
 		this.global=g.create();			//capture the graphics that we can use
@@ -82,16 +87,16 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 		g.setColor(Color.GRAY);
 		g.drawRect(100, 0, this.Grid_Width*this.BOX_Width, this.Grid_Height*this.BOX_Height);
 		
-		for(int x=100+this.BOX_Width;x<=100+this.Grid_Width*this.BOX_Width;x=x+this.BOX_Width)
-		{
-			g.drawLine(x, 0, x, this.Grid_Height*this.BOX_Height);
-		}
-		
-		for(int y=this.BOX_Height;y<=this.Grid_Height*this.BOX_Width;y=y+this.BOX_Height)
-		{
-			
-			g.drawLine(100, y, 100+this.Grid_Width*this.BOX_Height, y);
-		}
+//		for(int x=100+this.BOX_Width;x<=100+this.Grid_Width*this.BOX_Width;x=x+this.BOX_Width)
+//		{
+//			g.drawLine(x, 0, x, this.Grid_Height*this.BOX_Height);
+//		}
+//		
+//		for(int y=this.BOX_Height;y<=this.Grid_Height*this.BOX_Width;y=y+this.BOX_Height)
+//		{
+//			
+//			g.drawLine(100, y, 100+this.Grid_Width*this.BOX_Height, y);
+//		}
 	}
 	
 	public void DrawScore(Graphics g)
@@ -110,6 +115,7 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 		
 		switch (this.direct)
 		{
+		
 		case direction.east:
 			newPoint =new Point(head.x+1,head.y);
 			break;
@@ -123,9 +129,14 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 			newPoint =new Point(head.x,head.y-1);
 			break;
 			
+		default:
+			newPoint =new Point(head.x,head.y+1);
+			break;
+			
 		}
+		
 		if(this.direct!=direction.No_direction)
-		snake.remove(snake.peekLast());
+			snake.remove(snake.peekLast());
 		
 		//check if the point is fruit
 		if (newPoint.equals(fruit)){
@@ -135,7 +146,9 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 			this.score=this.score+10;
 			
 		}
-		else if (newPoint.x<0||newPoint.x>=this.Grid_Width||newPoint.y>=this.Grid_Height||newPoint.y<0)
+		
+		
+		if (newPoint.x<0||newPoint.x>=this.Grid_Width||newPoint.y>=this.Grid_Height||newPoint.y<0)
 		{
 			try {
 				Thread.currentThread().wait();
@@ -145,10 +158,19 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 			}
 			
 		}
-		else if (snake.contains(newPoint))
-		{
 		
+		if (snake.contains(newPoint))
+		{
+//			try {
+//				Thread.currentThread().wait();
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		
 		}
+		
+		
 		if(this.direct!=direction.No_direction)	
 			snake.push(newPoint);
 	}
