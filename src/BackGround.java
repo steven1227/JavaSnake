@@ -50,9 +50,9 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 		snake = new LinkedList<Point>();
 		
 		
-		snake.add(new Point(3,3));
-		snake.add(new Point(3,2));
-		snake.add(new Point(3,1));
+		snake.add(new Point(1,3));
+		snake.add(new Point(1,2));
+		snake.add(new Point(1,1));
 		
 		
 		this.global=g.create();			//capture the graphics that we can use
@@ -115,6 +115,7 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 		
 		switch (this.direct)
 		{
+		
 		case direction.east:
 			newPoint =new Point(head.x+1,head.y);
 			break;
@@ -128,9 +129,14 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 			newPoint =new Point(head.x,head.y-1);
 			break;
 			
+		default:
+			newPoint =new Point(head.x,head.y+1);
+			break;
+			
 		}
+		
 		if(this.direct!=direction.No_direction)
-		snake.remove(snake.peekLast());
+			snake.remove(snake.peekLast());
 		
 		//check if the point is fruit
 		if (newPoint.equals(fruit)){
@@ -140,7 +146,9 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 			this.score=this.score+10;
 			
 		}
-		else if (newPoint.x<0||newPoint.x>=this.Grid_Width||newPoint.y>=this.Grid_Height||newPoint.y<0)
+		
+		
+		if (newPoint.x<0||newPoint.x>=this.Grid_Width||newPoint.y>=this.Grid_Height||newPoint.y<0)
 		{
 			try {
 				Thread.currentThread().wait();
@@ -150,10 +158,19 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 			}
 			
 		}
-		else if (snake.contains(newPoint))
-		{
 		
+		if (snake.contains(newPoint))
+		{
+//			try {
+//				Thread.currentThread().wait();
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		
 		}
+		
+		
 		if(this.direct!=direction.No_direction)	
 			snake.push(newPoint);
 	}
