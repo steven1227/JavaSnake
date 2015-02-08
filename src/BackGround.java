@@ -15,6 +15,11 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 {
 
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private LinkedList<Point> snake;
 	//the fruit var
 	private Point fruit;
@@ -82,16 +87,16 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 		g.setColor(Color.GRAY);
 		g.drawRect(100, 0, this.Grid_Width*this.BOX_Width, this.Grid_Height*this.BOX_Height);
 		
-		for(int x=100+this.BOX_Width;x<=100+this.Grid_Width*this.BOX_Width;x=x+this.BOX_Width)
-		{
-			g.drawLine(x, 0, x, this.Grid_Height*this.BOX_Height);
-		}
-		
-		for(int y=this.BOX_Height;y<=this.Grid_Height*this.BOX_Width;y=y+this.BOX_Height)
-		{
-			
-			g.drawLine(100, y, 100+this.Grid_Width*this.BOX_Height, y);
-		}
+//		for(int x=100+this.BOX_Width;x<=100+this.Grid_Width*this.BOX_Width;x=x+this.BOX_Width)
+//		{
+//			g.drawLine(x, 0, x, this.Grid_Height*this.BOX_Height);
+//		}
+//		
+//		for(int y=this.BOX_Height;y<=this.Grid_Height*this.BOX_Width;y=y+this.BOX_Height)
+//		{
+//			
+//			g.drawLine(100, y, 100+this.Grid_Width*this.BOX_Height, y);
+//		}
 	}
 	
 	public void DrawScore(Graphics g)
