@@ -1,10 +1,12 @@
 import java.awt.Canvas;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -31,7 +33,7 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 	private final int Grid_Width=30;
 	private final int Grid_Height=30;
 	private int direct=direction.No_direction;
-	private Graphics global;
+	//private Graphics global;
 	private int score=0;
 	
 	public void init()
@@ -45,17 +47,15 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 		
 		System.out.print("fuck\n");
 		
-		this.fruit = new Point(10,10);
+		if (snake==null){
+			snake = new LinkedList<Point>();
+			snake.add(new Point(10,3));
+			snake.add(new Point(10,2));
+			snake.add(new Point(10,1));
+			this.fruit = new Point(10,10);
+		}
 		
-		snake = new LinkedList<Point>();
-		
-		
-		snake.add(new Point(1,3));
-		snake.add(new Point(1,2));
-		snake.add(new Point(1,1));
-		
-		
-		this.global=g.create();			//capture the graphics that we can use
+				//capture the graphics that we can use
 		
 		this.addKeyListener(this);
 		
@@ -68,41 +68,72 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 			this.Run=new Thread(this,"draw");
 			Run.start();
 		}
+		this.DrawGrid(g);
+		this.DrawFruit(g);
+		this.DrawSanke(g);
+		this.DrawScore(g);
 	
 	}
 	
+	public void update(Graphics g) {
+		Graphics offScreenGraphics;
+		Dimension d = this.getSize();
+		System.out.println(d.width+"..."+d.height);
+		BufferedImage offscreen = new BufferedImage(d.width,d.height, BufferedImage.TYPE_INT_ARGB);
+		offScreenGraphics = offscreen.getGraphics();
+		offScreenGraphics.setColor(this.getBackground());
+		offScreenGraphics.fillRect(100, 0, d.width, d.height);
+		offScreenGraphics.setColor(this.getForeground());
+		paint(offScreenGraphics);
+		
+		//flip
+		g.drawImage(offscreen, 0, 0, this);
+
+		
+	}
+/*	
 	public void Draw(Graphics g)
 	{
 		
 		g.clearRect(100, 0, this.Grid_Width*this.BOX_Width, this.Grid_Height*this.BOX_Height);
-	
+		//create a new image
+//		BufferedImage buffer = new BufferedImage(this.Grid_Width*this.BOX_Width, this.Grid_Height*this.BOX_Height,BufferedImage.TYPE_INT_ARGB);
+//		Graphics bufferGraphics = buffer.getGraphics();
+//		
+//		this.DrawGrid(bufferGraphics);
+//		this.DrawSanke(bufferGraphics);
+//		this.DrawFruit(bufferGraphics);
 		this.DrawGrid(g);
-		this.DrawSanke(g);
 		this.DrawFruit(g);
+		this.DrawSanke(g);
 		this.DrawScore(g);
+		
+		//flip
+		//g.drawImage(buffer, 100, 0, this.Grid_Width*this.BOX_Width,this.Grid_Height*this.BOX_Height, this);
 	}
-	
+*/	
 	public void DrawGrid(Graphics g)
 	{
 		g.setColor(Color.GRAY);
 		g.drawRect(100, 0, this.Grid_Width*this.BOX_Width, this.Grid_Height*this.BOX_Height);
 		
-//		for(int x=100+this.BOX_Width;x<=100+this.Grid_Width*this.BOX_Width;x=x+this.BOX_Width)
-//		{
-//			g.drawLine(x, 0, x, this.Grid_Height*this.BOX_Height);
-//		}
-//		
-//		for(int y=this.BOX_Height;y<=this.Grid_Height*this.BOX_Width;y=y+this.BOX_Height)
-//		{
-//			
-//			g.drawLine(100, y, 100+this.Grid_Width*this.BOX_Height, y);
-//		}
+		for(int x=100+this.BOX_Width;x<=100+this.Grid_Width*this.BOX_Width;x=x+this.BOX_Width)
+		{
+			g.drawLine(x, 0, x, this.Grid_Height*this.BOX_Height);
+		}
+		
+		for(int y=this.BOX_Height;y<=this.Grid_Height*this.BOX_Width;y=y+this.BOX_Height)
+		{
+			
+			g.drawLine(100, y, 100+this.Grid_Width*this.BOX_Height, y);
+		}
 	}
 	
 	public void DrawScore(Graphics g)
 	{
 		g.setColor(Color.BLACK);
-		g.clearRect(850, 250, 100, 100);
+		//g.clearRect(850, 250, 100, 100);
+		 
 		g.setFont(new Font("TimesRoman", Font.PLAIN,18)); 
 		g.drawString(""+this.score, 860, 300);
 	}
@@ -230,7 +261,8 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 		{		
 			
 			this.move();
-			this.Draw(global);
+			//this.Draw(global);
+			this.repaint();
 
 			try
 			{
@@ -254,21 +286,25 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 
 	//	System.out.println("right");
 		if (arg0.getKeyCode()==KeyEvent.VK_UP){
+			if (this.direct != direction.south)
 			this.direct=direction.north;
 			//System.out.println(this.direct);
 		}
 		else if (arg0.getKeyCode()==KeyEvent.VK_DOWN)
 		{
+			if (this.direct != direction.north)
 			this.direct=direction.south;
 		//	System.out.println(this.direct);
 		}
 		else if (arg0.getKeyCode()==KeyEvent.VK_RIGHT)
 		{
-				this.direct=direction.east;
+			if (this.direct != direction.west)
+			this.direct=direction.east;
 				//System.out.println(this.direct);
 		}
 		else
 		{
+			if (this.direct != direction.east)
 			this.direct =direction.west;
 		//	System.out.println(this.direct);
 		}
