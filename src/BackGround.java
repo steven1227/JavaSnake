@@ -19,6 +19,8 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
+	private String restart = "";
 	
 	private LinkedList<Point> snake;
 	//the fruit var
@@ -33,6 +35,7 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 	private int direct=direction.No_direction;
 	private Graphics global;
 	private int score=0;
+	private boolean start=false;
 	
 	public void init()
 	{
@@ -45,7 +48,7 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 		
 		System.out.print("fuck\n");
 		
-		this.fruit = new Point(10,10);
+		
 		
 		snake = new LinkedList<Point>();
 		
@@ -62,6 +65,7 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 		g.setFont(new Font("TimesRoman", Font.PLAIN,18)); 
 		String s="Score:";
 		g.drawString(s, 800, 300);
+		this.PlaceFruit();
 		
 		if(this.Run==null)
 		{
@@ -71,15 +75,42 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 	
 	}
 	
+	public void restart()
+	{
+		
+		snake = new LinkedList<Point>();
+		snake.add(new Point(1,3));
+		snake.add(new Point(1,2));
+		snake.add(new Point(1,1));
+		
+		this.score=0;
+		this.direct=direction.No_direction;
+		this.start=false;
+		this.restart=new String("Your Snake failed.");
+		
+	}
 	public void Draw(Graphics g)
 	{
 		
 		g.clearRect(100, 0, this.Grid_Width*this.BOX_Width, this.Grid_Height*this.BOX_Height);
 	
 		this.DrawGrid(g);
-		this.DrawSanke(g);
-		this.DrawFruit(g);
+		
 		this.DrawScore(g);
+		
+		if (this.start==false)
+		{
+			g.setFont(new Font("TimesRoman", Font.BOLD,30)); 
+			String s="Press Space Button to start ";
+			g.drawString(this.restart, 205, 250);
+			g.drawString(s, 205, 300);	
+		}
+		else
+		{
+			this.DrawSanke(g);
+			this.DrawFruit(g);	
+			
+		}
 	}
 	
 	public void DrawGrid(Graphics g)
@@ -109,6 +140,7 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 	
 	public void move()
 	{
+		boolean flag=true;
 		Point head = snake.peekFirst();
 		Point tail = snake.peekLast();
 		Point newPoint = head;
@@ -128,11 +160,9 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 		case direction.north:	
 			newPoint =new Point(head.x,head.y-1);
 			break;
-			
 		default:
 			newPoint =new Point(head.x,head.y+1);
 			break;
-			
 		}
 		
 		if(this.direct!=direction.No_direction)
@@ -143,12 +173,16 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 			// snake add head action 
 			snake.add(tail);
 			PlaceFruit();
-			this.score=this.score+10;
-			
+			this.score=this.score+10;		
+		}	
+		
+		else if (newPoint.x<0||newPoint.x>=this.Grid_Width||newPoint.y>=this.Grid_Height||newPoint.y<0)
+		{
+			restart();
+			flag=false;
 		}
 		
-		
-		if (newPoint.x<0||newPoint.x>=this.Grid_Width||newPoint.y>=this.Grid_Height||newPoint.y<0)
+		else if (snake.contains(newPoint))
 		{
 			try {
 				Thread.currentThread().wait();
@@ -156,29 +190,18 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
-		}
-		
-		if (snake.contains(newPoint))
-		{
-//			try {
-//				Thread.currentThread().wait();
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		
+
 		}
 		
 		
-		if(this.direct!=direction.No_direction)	
+		if(this.direct!=direction.No_direction&&flag)	
 			snake.push(newPoint);
 	}
 	
 	
 	public void DrawSanke(Graphics g)
 	{
-		
+		System.out.println(snake.size());
 		for(int i=0;i<snake.size();i++)
 		{
 			if(i==0)
@@ -254,22 +277,33 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 
 	//	System.out.println("right");
 		if (arg0.getKeyCode()==KeyEvent.VK_UP){
+			if (this.direct!=direction.south&&this.direct!=direction.No_direction)
 			this.direct=direction.north;
 			//System.out.println(this.direct);
 		}
 		else if (arg0.getKeyCode()==KeyEvent.VK_DOWN)
 		{
+			if (this.direct!=direction.north&&this.direct!=direction.No_direction)
 			this.direct=direction.south;
 		//	System.out.println(this.direct);
 		}
 		else if (arg0.getKeyCode()==KeyEvent.VK_RIGHT)
 		{
+			if (this.direct!=direction.west&&this.direct!=direction.No_direction)
 				this.direct=direction.east;
 				//System.out.println(this.direct);
 		}
-		else
+		else if (arg0.getKeyCode()==KeyEvent.VK_LEFT)
 		{
+			if (this.direct!=direction.east&&this.direct!=direction.No_direction)
 			this.direct =direction.west;
+		//	System.out.println(this.direct);
+		}
+		else if (arg0.getKeyCode()==KeyEvent.VK_SPACE)
+		{
+			if(this.direct==direction.No_direction)
+			this.direct =direction.south;
+			this.start=true;
 		//	System.out.println(this.direct);
 		}
 					
