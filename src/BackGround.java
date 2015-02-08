@@ -35,8 +35,10 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 	{
 		this.fruit = new Point(10,10);
 		this.global=g.create();
+		this.addKeyListener(this);
 		this.Run=new Thread(this);
 		Run.start();
+	
 	}
 	
 	public void Draw(Graphics g)
@@ -59,15 +61,43 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 		
 		for(int y=this.BOX_Height;y<=this.Grid_Height*this.BOX_Width;y=y+this.BOX_Height)
 		{
+			
 			g.drawLine(100, y, 100+this.Grid_Width*this.BOX_Height, y);
 		}
 	}
+	
+	
+	public void move()
+	{
+		switch (this.direct)
+		{
+		case direction.east:
+			System.out.println("right");
+			break;
+		case direction.west:
+			System.out.println("left");
+			break;
+		case direction.south:
+			System.out.println("down");
+			break;
+		case direction.north:	
+			System.out.println("up");
+			break;
+	
+		
+		
+		
+		
+		}
+	}
+	
 	
 	public void DrawSanke(Graphics g)
 	{
 		g.setColor(Color.green);
 	}
 	
+<<<<<<< HEAD
 	public void DrawFruit(Graphics g) {
 		g.setColor(Color.RED);
 		g.fillOval(this.fruit.x*BOX_Width+100,this.fruit.y*BOX_Height,BOX_Width,BOX_Height);
@@ -87,6 +117,17 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 		
 		fruit = randomPoint;
 	}
+=======
+	private LinkedList<Point> snake;
+	private Thread Run;
+	//the map parameter
+	private final int BOX_Height=15;
+	private final int BOX_Width=15;
+	private final int Grid_Width=30;
+	private final int Grid_Height=30;
+	private Graphics global;
+	private int direct=direction.No_direction;
+>>>>>>> 393a593c5798ebe95b384f47903e56a89d0b0ca5
 	
 	public void Move() {
 		Point head = snake.peekFirst();
@@ -108,7 +149,11 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 		while(true)
 		{
 			this.Draw(global);
+<<<<<<< HEAD
 			//this.Move();
+=======
+			this.move();
+>>>>>>> 393a593c5798ebe95b384f47903e56a89d0b0ca5
 			try
 			{
 				Thread.currentThread();
@@ -126,6 +171,30 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 	@Override
 	public void keyPressed(KeyEvent arg0) {
 		// TODO Auto-generated method stub
+<<<<<<< HEAD
+=======
+	//	System.out.println("right");
+		if (arg0.getKeyCode()==KeyEvent.VK_UP){
+			this.direct=direction.north;
+			//System.out.println(this.direct);
+		}
+		else if (arg0.getKeyCode()==KeyEvent.VK_DOWN)
+		{
+			this.direct=direction.south;
+		//	System.out.println(this.direct);
+		}
+		else if (arg0.getKeyCode()==KeyEvent.VK_RIGHT)
+		{
+				this.direct=direction.east;
+				//System.out.println(this.direct);
+		}
+		else
+		{
+			this.direct =direction.west;
+		//	System.out.println(this.direct);
+		}
+					
+>>>>>>> 393a593c5798ebe95b384f47903e56a89d0b0ca5
 		
 	}
 
