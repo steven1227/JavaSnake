@@ -21,20 +21,24 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
+	private String restart = "";
 	
 	private LinkedList<Point> snake;
-	//the fruit var
+
 	private Point fruit;
 	
 	private Thread Run;
-	//the map parameter
+
 	private final int BOX_Height=20;
 	private final int BOX_Width=20;
 	private final int Grid_Width=30;
 	private final int Grid_Height=30;
 	private int direct=direction.No_direction;
-	//private Graphics global;
+
 	private int score=0;
+	private boolean start=false;
+
 	
 	public void init()
 	{
@@ -47,13 +51,15 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 		
 		System.out.print("fuck\n");
 		
+
 		if (snake==null){
 			snake = new LinkedList<Point>();
-			snake.add(new Point(10,3));
-			snake.add(new Point(10,2));
-			snake.add(new Point(10,1));
+			snake.add(new Point(1,3));
+			snake.add(new Point(1,2));
+			snake.add(new Point(1,1));
 			this.fruit = new Point(10,10);
 		}
+
 		
 				//capture the graphics that we can use
 		
@@ -62,6 +68,7 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 		g.setFont(new Font("TimesRoman", Font.PLAIN,18)); 
 		String s="Score:";
 		g.drawString(s, 800, 300);
+		//this.PlaceFruit();
 		
 		if(this.Run==null)
 		{
@@ -69,12 +76,39 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 			Run.start();
 		}
 		this.DrawGrid(g);
-		this.DrawFruit(g);
-		this.DrawSanke(g);
 		this.DrawScore(g);
-	
+		
+		if (this.start==false)
+		{
+			g.setFont(new Font("TimesRoman", Font.BOLD,30)); 
+			String s2="Press Space Button to start ";
+			g.drawString(this.restart, 205, 250);
+			g.drawString(s2, 205, 300);	
+		}
+		else
+		{
+			this.DrawSanke(g);
+			this.DrawFruit(g);	
+			
+		}
 	}
 	
+
+	public void restart()
+	{
+		
+		snake = new LinkedList<Point>();
+		snake.add(new Point(1,3));
+		snake.add(new Point(1,2));
+		snake.add(new Point(1,1));
+		
+		this.score=0;
+		this.direct=direction.No_direction;
+		this.start=false;
+		this.restart=new String("Your Snake failed.");
+		
+	}
+
 	public void update(Graphics g) {
 		Graphics offScreenGraphics;
 		Dimension d = this.getSize();
@@ -85,48 +119,27 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 		offScreenGraphics.fillRect(100, 0, d.width, d.height);
 		offScreenGraphics.setColor(this.getForeground());
 		paint(offScreenGraphics);
-		
-		//flip
+
 		g.drawImage(offscreen, 0, 0, this);
 
-		
+	
 	}
-/*	
-	public void Draw(Graphics g)
-	{
-		
-		g.clearRect(100, 0, this.Grid_Width*this.BOX_Width, this.Grid_Height*this.BOX_Height);
-		//create a new image
-//		BufferedImage buffer = new BufferedImage(this.Grid_Width*this.BOX_Width, this.Grid_Height*this.BOX_Height,BufferedImage.TYPE_INT_ARGB);
-//		Graphics bufferGraphics = buffer.getGraphics();
-//		
-//		this.DrawGrid(bufferGraphics);
-//		this.DrawSanke(bufferGraphics);
-//		this.DrawFruit(bufferGraphics);
-		this.DrawGrid(g);
-		this.DrawFruit(g);
-		this.DrawSanke(g);
-		this.DrawScore(g);
-		
-		//flip
-		//g.drawImage(buffer, 100, 0, this.Grid_Width*this.BOX_Width,this.Grid_Height*this.BOX_Height, this);
-	}
-*/	
+
 	public void DrawGrid(Graphics g)
 	{
 		g.setColor(Color.GRAY);
 		g.drawRect(100, 0, this.Grid_Width*this.BOX_Width, this.Grid_Height*this.BOX_Height);
 		
-		for(int x=100+this.BOX_Width;x<=100+this.Grid_Width*this.BOX_Width;x=x+this.BOX_Width)
-		{
-			g.drawLine(x, 0, x, this.Grid_Height*this.BOX_Height);
-		}
-		
-		for(int y=this.BOX_Height;y<=this.Grid_Height*this.BOX_Width;y=y+this.BOX_Height)
-		{
-			
-			g.drawLine(100, y, 100+this.Grid_Width*this.BOX_Height, y);
-		}
+//		for(int x=100+this.BOX_Width;x<=100+this.Grid_Width*this.BOX_Width;x=x+this.BOX_Width)
+//		{
+//			g.drawLine(x, 0, x, this.Grid_Height*this.BOX_Height);
+//		}
+//		
+//		for(int y=this.BOX_Height;y<=this.Grid_Height*this.BOX_Width;y=y+this.BOX_Height)
+//		{
+//			
+//			g.drawLine(100, y, 100+this.Grid_Width*this.BOX_Height, y);
+//		}
 	}
 	
 	public void DrawScore(Graphics g)
@@ -140,6 +153,8 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 	
 	public void move()
 	{
+
+		boolean flag=true;
 		Point head = snake.peekFirst();
 		Point tail = snake.peekLast();
 		Point newPoint = head;
@@ -159,11 +174,9 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 		case direction.north:	
 			newPoint =new Point(head.x,head.y-1);
 			break;
-			
 		default:
 			newPoint =new Point(head.x,head.y+1);
 			break;
-			
 		}
 		
 		if(this.direct!=direction.No_direction)
@@ -174,42 +187,34 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 			// snake add head action 
 			snake.add(tail);
 			PlaceFruit();
-			this.score=this.score+10;
-			
-		}
+			this.score=this.score+10;		
+		}	
 		
-		
-		if (newPoint.x<0||newPoint.x>=this.Grid_Width||newPoint.y>=this.Grid_Height||newPoint.y<0)
+		else if (newPoint.x<0||newPoint.x>=this.Grid_Width||newPoint.y>=this.Grid_Height||newPoint.y<0)
 		{
-			try {
-				Thread.currentThread().wait();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
+			restart();
+			flag=false;
 		}
 		
-		if (snake.contains(newPoint))
+		else if (snake.contains(newPoint))
 		{
-//			try {
-//				Thread.currentThread().wait();
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//		
+			restart();
+			flag=false;
+
 		}
 		
 		
-		if(this.direct!=direction.No_direction)	
+		if(this.direct!=direction.No_direction&&flag)	
 			snake.push(newPoint);
+		
+		
+
 	}
 	
 	
 	public void DrawSanke(Graphics g)
 	{
-		
+		System.out.println(snake.size());
 		for(int i=0;i<snake.size();i++)
 		{
 			if(i==0)
@@ -222,12 +227,7 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 			g.fillRect(100+snake.get(i).x * BOX_Width, snake.get(i).y * BOX_Height, BOX_Width, BOX_Height);
 			
 		}
-//		for (Point p : snake)
-//		{
-//			g.fillRect(100+p.x * BOX_Width, p.y * BOX_Height, BOX_Width, BOX_Height);
-//		}
-//		g.setColor(Color.white);
-//		g.setColor(Color.GRAY);
+
 	}
 	
 	
@@ -282,32 +282,47 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 
 	@Override
 	public void keyPressed(KeyEvent arg0) {
-		// TODO Auto-generated method stub
-
-	//	System.out.println("right");
+		
+		
 		if (arg0.getKeyCode()==KeyEvent.VK_UP){
-			if (this.direct != direction.south)
+
+			if (this.direct!=direction.south&&this.direct!=direction.No_direction)
+
 			this.direct=direction.north;
-			//System.out.println(this.direct);
+	
 		}
 		else if (arg0.getKeyCode()==KeyEvent.VK_DOWN)
 		{
-			if (this.direct != direction.north)
+
+			if (this.direct!=direction.north&&this.direct!=direction.No_direction)
+
 			this.direct=direction.south;
-		//	System.out.println(this.direct);
+
 		}
 		else if (arg0.getKeyCode()==KeyEvent.VK_RIGHT)
 		{
-			if (this.direct != direction.west)
-			this.direct=direction.east;
+
+			if (this.direct!=direction.west&&this.direct!=direction.No_direction)
+				this.direct=direction.east;
+
 				//System.out.println(this.direct);
 		}
-		else
+		else if (arg0.getKeyCode()==KeyEvent.VK_LEFT)
 		{
-			if (this.direct != direction.east)
+
+			if (this.direct!=direction.east&&this.direct!=direction.No_direction)
+
 			this.direct =direction.west;
-		//	System.out.println(this.direct);
+
 		}
+		else if (arg0.getKeyCode()==KeyEvent.VK_SPACE)
+		{
+			if(this.direct==direction.No_direction)
+			this.direct =direction.south;
+			this.start=true;
+
+		}
+		
 					
 	}
 
