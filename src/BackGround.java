@@ -3,12 +3,19 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.net.URL;
 import java.util.LinkedList;
 import java.util.Random;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 
 
 
@@ -27,8 +34,9 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 	private LinkedList<Point> snake;
 
 	private Point fruit;
-	
+	private Image i;
 	private Thread Run;
+	Image city;
 
 	private final int BOX_Height=20;
 	private final int BOX_Width=20;
@@ -38,18 +46,22 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 
 	private int score=0;
 	private boolean start=false;
-
+	private boolean flag=true;
+	URL url;
+	
 	
 	public void init()
 	{
-			
+		
+		
 	}
 	
 	
 	public void paint(Graphics g)
 	{
+			g.drawImage(city, 100, 0, null);
 		
-		System.out.print("fuck\n");
+		//System.out.print("fuck\n");
 		
 
 		if (snake==null){
@@ -62,8 +74,15 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 
 		
 				//capture the graphics that we can use
+		if(this.flag==true)
+		{
+			this.addKeyListener(this);
 		
-		this.addKeyListener(this);
+			city = new ImageIcon("background.jpg").getImage();
+			
+			this.flag=false;
+	
+		}
 		
 		g.setFont(new Font("TimesRoman", Font.PLAIN,18)); 
 		String s="Score:";
@@ -82,6 +101,8 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 		{
 			g.setFont(new Font("TimesRoman", Font.BOLD,30)); 
 			String s2="Press Space Button to start ";
+			//String s3=1+"2";
+			//System.out.println(s3.charAt(1));
 			g.drawString(this.restart, 205, 250);
 			g.drawString(s2, 205, 300);	
 		}
@@ -119,8 +140,10 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 		offScreenGraphics.fillRect(100, 0, d.width, d.height);
 		offScreenGraphics.setColor(this.getForeground());
 		paint(offScreenGraphics);
-
+		
+		
 		g.drawImage(offscreen, 0, 0, this);
+		
 
 	
 	}
