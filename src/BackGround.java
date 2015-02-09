@@ -112,7 +112,7 @@ public class BackGround  extends Canvas implements Runnable,KeyListener
 	public void update(Graphics g) {
 		Graphics offScreenGraphics;
 		Dimension d = this.getSize();
-		System.out.println(d.width+"..."+d.height);
+		//System.out.println(d.width+"..."+d.height);
 		BufferedImage offscreen = new BufferedImage(d.width,d.height, BufferedImage.TYPE_INT_ARGB);
 		offScreenGraphics = offscreen.getGraphics();
 		offScreenGraphics.setColor(this.getBackground());
